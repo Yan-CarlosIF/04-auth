@@ -1,6 +1,8 @@
 import { useContext, useEffect } from "react";
 import { authContext } from "../context/AuthContext";
-import { api } from "../services/axios";
+import { withSRRAuth } from "../utils/withSRRAuth";
+import { api } from "../services/apiClient";
+import { setupAPIClient } from "../services/axios";
 
 export default function Dashboard() {
   const { user } = useContext(authContext);
@@ -18,3 +20,12 @@ export default function Dashboard() {
     </div>
   );
 }
+
+export const getServerSideProps = withSRRAuth(async (context) => {
+  const apiClient = setupAPIClient(context);
+  await apiClient.get("/me");
+
+  return {
+    props: {},
+  };
+});

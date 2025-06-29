@@ -1,7 +1,5 @@
 import { FormEvent, useContext, useState } from "react";
 import { authContext } from "../context/AuthContext";
-import { GetServerSideProps } from "next";
-import { parseCookies } from "nookies";
 import { withSRRGuest } from "../utils/withSSRGuest";
 
 export default function Home() {
