@@ -3,29 +3,39 @@ import { authContext } from "../context/AuthContext";
 import { withSRRAuth } from "../utils/withSRRAuth";
 import { api } from "../services/apiClient";
 import { setupAPIClient } from "../services/axios";
+import { Can } from "../components/Can";
 
 export default function Dashboard() {
-  const { user } = useContext(authContext);
+  const { user, signOut } = useContext(authContext);
 
   useEffect(() => {
-    api
-      .get("/me")
-      .then((response) => console.log(response.data))
-      .catch((err) => console.error(err));
+    api.get("/me").then((response) => console.log(response.data));
   }, []);
 
   return (
-    <div>
+    <>
       <h1>Dashboard: {user?.email}</h1>
-    </div>
+
+      <button onClick={signOut}>Sign out</button>
+
+      <Can permissions={["metrics.list"]}>
+        <div>Métricas</div>
+      </Can>
+    </>
   );
 }
 
-export const getServerSideProps = withSRRAuth(async (context) => {
-  const apiClient = setupAPIClient(context);
-  await apiClient.get("/me");
+export const getServerSideProps = withSRRAuth(
+  async (context) => {
+    const apiClient = setupAPIClient(context);
+    await apiClient.get("/me");
 
-  return {
-    props: {},
-  };
-});
+    return {
+      props: {},
+    };
+  },
+  {
+    permissions: ["metrics.list"],
+    roles: ["administrator"],
+  }
+);
